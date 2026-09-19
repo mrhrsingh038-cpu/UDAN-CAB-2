@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>UDAN CAB - Driver Dashboard</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f5f5f5;
+    color:#222;
+}
+
+.navbar{
+    height:70px;
+    background:#111;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 7%;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:bold;
+}
+
+.logo span{
+    color:#ffd000;
+}
+
+.nav-right{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.logout{
+    background:#ffd000;
+    border:none;
+    padding:10px 18px;
+    border-radius:6px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.container{
+    width:90%;
+    max-width:1200px;
+    margin:30px auto;
+}
+
+.top-card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.top-card h1{
+    margin-bottom:8px;
+}
+
+.top-card p{
+    color:#777;
+}
+
+.online-area{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.online-text{
+    font-weight:bold;
+}
+
+.switch{
+    width:60px;
+    height:31px;
+    border-radius:20px;
+    background:#aaa;
+    cursor:pointer;
+    position:relative;
+}
+
+.switch.active{
+    background:#1ca34a;
+}
+
+.switch-circle{
+    width:25px;
+    height:25px;
+    background:white;
+    border-radius:50%;
+    position:absolute;
+    top:3px;
+    left:4px;
+    transition:.2s;
+}
+
+.switch.active .switch-circle{
+    left:31px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+    margin-top:25px;
+}
+
+.card{
+    background:white;
+    border-radius:12px;
+    padding:22px;
+    box-shadow:0 5px 18px rgba(0,0,0,.07);
+}
+
+.card h3{
+    color:#777;
+    font-size:14px;
+    margin-bottom:8px;
+}
+
+.card p{
+    font-size:28px;
+    font-weight:bold;
+}
+
+.section{
+    margin-top:30px;
+}
+
+.section h2{
+    margin-bottom:15px;
+}
+
+.actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+}
+
+.btn{
+    border:none;
+    padding:11px 18px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.primary{
+    background:#ffd000;
+}
+
+.dark{
+    background:#111;
+    color:white;
+}
+
+.green{
+    background:#18a44a;
+    color:white;
+}
+
+.blue{
+    background:#1689ef;
+    color:white;
+}
+
+.red{
+    background:#e53935;
+    color:white;
+}
+
+.ride-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+}
+
+.ride{
+    background:white;
+    border-radius:13px;
+    padding:22px;
+    box-shadow:0 5px 18px rgba(0,0,0,.07);
+}
+
+.ride h3{
+    margin-bottom:15px;
+}
+
+.badge{
+    display:inline-block;
+    background:#fff3bd;
+    color:#725900;
+    padding:6px 11px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.location{
+    background:#f7f7f7;
+    padding:12px;
+    margin:7px 0;
+    border-radius:7px;
+}
+
+.location b{
+    display:block;
+    margin-bottom:4px;
+}
+
+.details{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin:15px 0;
+}
+
+.detail{
+    background:#fafafa;
+    padding:10px;
+    border-radius:6px;
+}
+
+.detail span{
+    display:block;
+    font-size:12px;
+    color:#777;
+    margin-bottom:5px;
+}
+
+.empty{
+    background:white;
+    padding:40px;
+    text-align:center;
+    border-radius:12px;
+    color:#777;
+}
+
+.message{
+    display:none;
+    padding:13px;
+    margin:20px 0;
+    border-radius:8px;
+}
+
+.message.show{
+    display:block;
+}
+
+.message.success{
+    background:#e5ffe9;
+    color:#08752c;
+}
+
+.message.error{
+    background:#ffe4e4;
+    color:#b40000;
+}
+
+.message.info{
+    background:#e4f2ff;
+    color:#075b99;
+}
+
+.location-box{
+    background:white;
+    padding:22px;
+    border-radius:12px;
+    box-shadow:0 5px 18px rgba(0,0,0,.07);
+    line-height:1.8;
+}
+
+@media(max-width:900px){
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .ride-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:600px){
+
+    .navbar{
+        padding:0 4%;
+    }
+
+    .logo{
+        font-size:23px;
+    }
+
+    .container{
+        width:94%;
+    }
+
+    .details{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<nav class="navbar">
+
+<div class="logo">
+UDAN<span>CAB</span>
+</div>
+
+<div class="nav-right">
+
+<span id="driverName">
+Driver
+</span>
+
+<button
+class="logout"
+onclick="logout()">
+
+Logout
+
+</button>
+
+</div>
+
+</nav>
+
+
+<div class="container">
+
+
+<div
+id="message"
+class="message">
+</div>
+
+
+<div class="top-card">
+
+<div>
+
+<h1>
+Driver Dashboard
+</h1>
+
+<p>
+Manage your rides and driver status.
+</p>
+
+</div>
+
+
+<div class="online-area">
+
+<span
+class="online-text"
+id="onlineText">
+
+Offline
+
+</span>
+
+
+<div
+class="switch"
+id="switch"
+onclick="changeStatus()">
+
+<div class="switch-circle">
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="grid">
+
+
+<div class="card">
+
+<h3>
+Available Rides
+</h3>
+
+<p id="available">
+0
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h3>
+Active Rides
+</h3>
+
+<p id="active">
+0
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h3>
+Completed Rides
+</h3>
+
+<p id="completed">
+0
+</p>
+
+</div>
+
+</div>
+
+
+<div class="section">
+
+<h2>
+Ride Management
+</h2>
+
+
+<div class="actions">
+
+<button
+class="btn dark"
+onclick="loadRides()">
+
+🔄 Refresh
+
+</button>
+
+
+<button
+class="btn primary"
+onclick="startGPS()">
+
+📍 Start GPS
+
+</button>
+
+
+<button
+class="btn red"
+onclick="stopGPS()">
+
+⛔ Stop GPS
+
+</button>
+
+</div>
+
+
+<div
+id="rides"
+class="ride-grid">
+
+<div class="empty">
+
+Loading rides...
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="section">
+
+<h2>
+My Current Location
+</h2>
+
+
+<div class="location-box">
+
+<div id="location">
+
+GPS not started.
+
+</div>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+const API =
+    "http://localhost:5000";
+
+
+const TOKEN =
+    localStorage.getItem(
+        "udanToken"
+    );
+
+
+const USER =
+    JSON.parse(
+        localStorage.getItem(
+            "udanUser"
+        ) || "null"
+    );
+
+
+let rides = [];
+
+let watchId = null;
+
+
+function headers(){
+
+    return {
+
+        "Content-Type":
+            "application/json",
+
+        "Authorization":
+            "Bearer " + TOKEN
+
+    };
+
+}
+
+
+function checkUser(){
+
+    if(!TOKEN || !USER){
+
+        location.href =
+            "login.html";
+
+        return false;
+
+    }
+
+
+    if(USER.role !== "driver"){
+
+        alert(
+            "Driver account required."
+        );
+
+        location.href =
+            "index.html";
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+function message(
+    text,
+    type="info"
+){
+
+    const box =
+        document.getElementById(
+            "message"
+        );
+
+
+    box.innerText = text;
+
+
+    box.className =
+        "message show " + type;
+
+
+    setTimeout(
+        function(){
+
+            box.className =
+                "message";
+
+        },
+        3500
+    );
+
+}
+
+
+function setup(){
+
+    if(!checkUser()){
+        return;
+    }
+
+
+    document
+    .getElementById(
+        "driverName"
+    )
+    .innerText =
+        USER.name || "Driver";
+
+
+    updateStatusUI(
+        USER.online === true
+    );
+
+
+    loadRides();
+
+}
+
+
+function updateStatusUI(
+    online
+){
+
+    const switchBox =
+        document.getElementById(
+            "switch"
+        );
+
+
+    const text =
+        document.getElementById(
+            "onlineText"
+        );
+
+
+    if(online){
+
+        switchBox.classList.add(
+            "active"
+        );
+
+        text.innerText =
+            "Online";
+
+    }else{
+
+        switchBox.classList.remove(
+            "active"
+        );
+
+        text.innerText =
+            "Offline";
+
+    }
+
+}
+
+
+async function changeStatus(){
+
+    if(!checkUser()){
+        return;
+    }
+
+
+    const online =
+        !Boolean(
+            USER.online
+        );
+
+
+    try{
+
+        const response =
+            await fetch(
+                API
+                + "/api/driver/status",
+                {
+
+                    method:"POST",
+
+                    headers:
+                        headers(),
+
+                    body:
+                    JSON.stringify({
+
+                        online
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+                || "Unable to update status"
+            );
+
+        }
+
+
+        USER.online =
+            online;
+
+
+        localStorage.setItem(
+            "udanUser",
+            JSON.stringify(USER)
+        );
+
+
+        updateStatusUI(
+            online
+        );
+
+
+        message(
+            online
+            ? "You are now online."
+            : "You are now offline.",
+            "success"
+        );
+
+
+        loadRides();
+
+
+    }catch(error){
+
+        message(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+async function loadRides(){
+
+    if(!checkUser()){
+        return;
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                API
+                + "/api/driver/rides",
+                {
+
+                    headers:
+                        headers()
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+                || "Could not load rides"
+            );
+
+        }
+
+
+        rides =
+            Array.isArray(
+                data.rides
+            )
+            ? data.rides
+            : [];
+
+
+        renderRides();
+
+        updateStats();
+
+
+    }catch(error){
+
+        document
+        .getElementById(
+            "rides"
+        )
+        .innerHTML =
+
+        `<div class="empty">
+            ${safe(error.message)}
+        </div>`;
+
+    }
+
+}
+
+
+function renderRides(){
+
+    const box =
+        document.getElementById(
+            "rides"
+        );
+
+
+    if(!rides.length){
+
+        box.innerHTML =
+
+        `<div class="empty">
+            No rides available right now.
+        </div>`;
+
+        return;
+
+    }
+
+
+    box.innerHTML =
+        rides
+        .map(
+            ride => rideHTML(ride)
+        )
+        .join("");
+
+}
+
+
+function rideHTML(
+    ride
+){
+
+    const passenger =
+        ride.passenger || {};
+
+
+    const status =
+        ride.status || "Searching";
+
+
+    const driverId =
+        getId(
+            ride.driver
+        );
+
+
+    const myId =
+        USER.id
+        || USER.userId;
+
+
+    const isMyRide =
+        String(driverId)
+        ===
+        String(myId);
+
+
+    let buttons = "";
+
+
+    if(
+        status === "Searching"
+        &&
+        !ride.driver
+    ){
+
+        buttons =
+
+        `<button
+            class="btn primary"
+            onclick="accept('${ride._id}')">
+
+            Accept Ride
+
+        </button>`;
+
+    }
+
+
+    if(
+        status === "Driver accepted"
+        &&
+        isMyRide
+    ){
+
+        buttons =
+
+        `<button
+            class="btn blue"
+            onclick="startRide('${ride._id}')">
+
+            Start Ride
+
+        </button>`;
+
+    }
+
+
+    if(
+        status === "Ride started"
+        &&
+        isMyRide
+    ){
+
+        buttons =
+
+        `<button
+            class="btn green"
+            onclick="completeRide('${ride._id}')">
+
+            Complete Ride
+
+        </button>`;
+
+    }
+
+
+    return `
+
+    <div class="ride">
+
+        <span class="badge">
+
+            ${safe(status)}
+
+        </span>
+
+
+        <h3>
+            🚕 Ride Request
+        </h3>
+
+
+        <div class="location">
+
+            <b>
+                📍 Pickup
+            </b>
+
+            ${safe(
+                ride.pickup
+                || "Not available"
+            )}
+
+        </div>
+
+
+        <div class="location">
+
+            <b>
+                🏁 Destination
+            </b>
+
+            ${safe(
+                ride.destination
+                || "Not available"
+            )}
+
+        </div>
+
+
+        <div class="details">
+
+
+            <div class="detail">
+
+                <span>
+                    Passenger
+                </span>
+
+                <strong>
+                    ${safe(
+                        passenger.name
+                        || "Passenger"
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+                <span>
+                    Phone
+                </span>
+
+                <strong>
+                    ${safe(
+                        passenger.phone
+                        || "N/A"
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+                <span>
+                    Cab
+                </span>
+
+                <strong>
+                    ${safe(
+                        ride.cabType
+                        || ride.vehicleType
+                        || "Cab"
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+                <span>
+                    Fare
+                </span>
+
+                <strong>
+                    ₹${Number(
+                        ride.fare || 0
+                    ).toFixed(0)}
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="actions">
+
+            ${buttons}
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+
+function getId(
+    value
+){
+
+    if(!value){
+        return "";
+    }
+
+
+    if(typeof value === "string"){
+        return value;
+    }
+
+
+    return value._id
+        || value.id
+        || value.userId
+        || "";
+
+}
+
+
+function safe(
+    value
+){
+
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+async function accept(
+    rideId
+){
+
+    if(!USER.online){
+
+        message(
+            "Please go online first.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+
+                API
+                + "/api/rides/"
+                + rideId
+                + "/accept",
+
+                {
+
+                    method:"POST",
+
+                    headers:
+                        headers()
+
+                }
+
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+                || "Unable to accept ride"
+            );
+
+        }
+
+
+        message(
+            "Ride accepted successfully.",
+            "success"
+        );
+
+
+        loadRides();
+
+
+    }catch(error){
+
+        message(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+async function startRide(
+    rideId
+){
+
+    try{
+
+        const response =
+            await fetch(
+
+                API
+                + "/api/rides/"
+                + rideId
+                + "/start",
+
+                {
+
+                    method:"PATCH",
+
+                    headers:
+                        headers()
+
+                }
+
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+                || "Unable to start ride"
+            );
+
+        }
+
+
+        message(
+            "Ride started.",
+            "success"
+        );
+
+
+        loadRides();
+
+        startGPS();
+
+
+    }catch(error){
+
+        message(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+async function completeRide(
+    rideId
+){
+
+    const confirmRide =
+        confirm(
+            "Complete this ride?"
+        );
+
+
+    if(!confirmRide){
+        return;
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+
+                API
+                + "/api/rides/"
+                + rideId
+                + "/complete",
+
+                {
+
+                    method:"PATCH",
+
+                    headers:
+                        headers()
+
+                }
+
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+                || "Unable to complete ride"
+            );
+
+        }
+
+
+        message(
+            "Ride completed successfully.",
+            "success"
+        );
+
+
+        loadRides();
+
+
+    }catch(error){
+
+        message(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+function updateStats(){
+
+    const myId =
+        USER.id
+        || USER.userId;
+
+
+    const available =
+        rides.filter(
+            ride =>
+                ride.status === "Searching"
+                &&
+                !ride.driver
+        ).length;
+
+
+    const active =
+        rides.filter(
+            ride => {
+
+                const driverId =
+                    getId(
+                        ride.driver
+                    );
+
+
+                return (
+                    String(driverId)
+                    ===
+                    String(myId)
+                )
+                &&
+                (
+                    ride.status ===
+                        "Driver accepted"
+                    ||
+                    ride.status ===
+                        "Ride started"
+                );
+
+            }
+        ).length;
+
+
+    const completed =
+        rides.filter(
+            ride => {
+
+                const driverId =
+                    getId(
+                        ride.driver
+                    );
+
+
+                return (
+                    String(driverId)
+                    ===
+                    String(myId)
+                )
+                &&
+                ride.status ===
+                    "Completed";
+
+            }
+        ).length;
+
+
+    document
+    .getElementById(
+        "available"
+    )
+    .innerText =
+        available;
+
+
+    document
+    .getElementById(
+        "active"
+    )
+    .innerText =
+        active;
+
+
+    document
+    .getElementById(
+        "completed"
+    )
+    .innerText =
+        completed;
+
+}
+
+
+function startGPS(){
+
+    if(!navigator.geolocation){
+
+        message(
+            "GPS is not supported.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(watchId !== null){
+
+        message(
+            "GPS is already running.",
+            "info"
+        );
+
+        return;
+
+    }
+
+
+    message(
+        "Starting GPS...",
+        "info"
+    );
+
+
+    watchId =
+        navigator.geolocation.watchPosition(
+
+            position => {
+
+                const latitude =
+                    position.coords.latitude;
+
+
+                const longitude =
+                    position.coords.longitude;
+
+
+                const accuracy =
+                    position.coords.accuracy;
+
+
+                document
+                .getElementById(
+                    "location"
+                )
+                .innerHTML =
+
+                    "Latitude: "
+                    + latitude.toFixed(6)
+
+                    + "<br>"
+
+                    + "Longitude: "
+                    + longitude.toFixed(6)
+
+                    + "<br>"
+
+                    + "Accuracy: "
+                    + Math.round(
+                        accuracy || 0
+                    )
+                    + " meters";
+
+
+                sendLocation(
+                    latitude,
+                    longitude,
+                    accuracy
+                );
+
+            },
+
+
+            error => {
+
+                message(
+                    "Unable to access GPS location.",
+                    "error"
+                );
+
+            },
+
+
+            {
+
+                enableHighAccuracy:true,
+
+                maximumAge:5000,
+
+                timeout:15000
+
+            }
+
+        );
+
+}
+
+
+function stopGPS(){
+
+    if(watchId !== null){
+
+        navigator.geolocation.clearWatch(
+            watchId
+        );
+
+        watchId = null;
+
+
+        message(
+            "GPS stopped.",
+            "info"
+        );
+
+    }
+
+}
+
+
+async function sendLocation(
+    latitude,
+    longitude,
+    accuracy
+){
+
+    try{
+
+        await fetch(
+            API
+            + "/api/location/update",
+            {
+
+                method:"POST",
+
+                headers:
+                    headers(),
+
+                body:
+                JSON.stringify({
+
+                    latitude,
+
+                    longitude,
+
+                    accuracy
+
+                })
+
+            }
+        );
+
+
+        const myId =
+            USER.id
+            || USER.userId;
+
+
+        const activeRide =
+            rides.find(
+                ride => {
+
+                    const driverId =
+                        getId(
+                            ride.driver
+                        );
+
+
+                    return (
+                        String(driverId)
+                        ===
+                        String(myId)
+                    )
+                    &&
+                    (
+                        ride.status ===
+                            "Driver accepted"
+                        ||
+                        ride.status ===
+                            "Ride started"
+                    );
+
+                }
+            );
+
+
+        if(activeRide){
+
+            await fetch(
+
+                API
+                + "/api/rides/"
+                + activeRide._id
+                + "/driver-location",
+
+                {
+
+                    method:"POST",
+
+                    headers:
+                        headers(),
+
+                    body:
+                    JSON.stringify({
+
+                        latitude,
+
+                        longitude,
+
+                        accuracy
+
+                    })
+
+                }
+
+            );
+
+        }
+
+
+    }catch(error){
+
+        console.error(
+            error
+        );
+
+    }
+
+}
+
+
+function logout(){
+
+    stopGPS();
+
+
+    localStorage.removeItem(
+        "udanToken"
+    );
+
+
+    localStorage.removeItem(
+        "udanUser"
+    );
+
+
+    location.href =
+        "login.html";
+
+}
+
+
+window.addEventListener(
+    "beforeunload",
+    function(){
+
+        if(watchId !== null){
+
+            navigator.geolocation.clearWatch(
+                watchId
+            );
+
+        }
+
+    }
+);
+
+
+setup();
+
+
+setInterval(
+    function(){
+
+        if(
+            TOKEN
+            &&
+            USER
+        ){
+
+            loadRides();
+
+        }
+
+    },
+    10000
+);
+
+</script>
+
+</body>
+
+</html>

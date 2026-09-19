@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>UDAN CAB - Admin Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        }
+
+        header h1 {
+            font-size: 25px;
+        }
+
+        header span {
+            color: #fbbf24;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1400px;
+            margin: 25px auto;
+        }
+
+        .welcome {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .welcome h2 {
+            margin-bottom: 8px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .stat-card h3 {
+            font-size: 30px;
+            margin-bottom: 8px;
+            color: #2563eb;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow-x: auto;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .section-header h2 {
+            font-size: 21px;
+        }
+
+        .refresh-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .refresh-btn:hover {
+            background: #1d4ed8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th,
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f3f4f6;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .online {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .offline {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .approved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .blocked {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .active {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .completed {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .action-btn {
+            border: none;
+            padding: 7px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 2px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .approve-btn {
+            background: #16a34a;
+            color: white;
+        }
+
+        .remove-btn {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .block-btn {
+            background: #dc2626;
+            color: white;
+        }
+
+        .unblock-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #7f1d1d;
+            color: white;
+        }
+
+        .message {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            display: none;
+            z-index: 9999;
+            font-weight: bold;
+        }
+
+        .message.success {
+            background: #16a34a;
+        }
+
+        .message.error {
+            background: #dc2626;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+
+        @media (max-width: 1100px) {
+            .stats {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 650px) {
+            header {
+                padding: 15px;
+            }
+
+            header h1 {
+                font-size: 20px;
+            }
+
+            .container {
+                width: 94%;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stat-card h3 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>UDAN <span>CAB</span> - Admin Panel</h1>
+
+    <button class="logout-btn" onclick="logout()">
+        Logout
+    </button>
+</header>
+
+<div class="container">
+
+    <div class="welcome">
+        <h2>Admin Dashboard</h2>
+        <p id="adminInfo">Loading admin information...</p>
+    </div>
+
+    <!-- ================= STATS ================= -->
+
+    <div class="stats">
+
+        <div class="stat-card">
+            <h3 id="totalUsers">0</h3>
+            <p>Total Users</p>
+        </div>
+
+        <div class="stat-card">
+            <h3 id="totalDrivers">0</h3>
+            <p>Total Drivers</p>
+        </div>
+
+        <div class="stat-card">
+            <h3 id="totalPassengers">0</h3>
+            <p>Total Passengers</p>
+        </div>
+
+        <div class="stat-card">
+            <h3 id="totalRides">0</h3>
+            <p>Total Rides</p>
+        </div>
+
+        <div class="stat-card">
+            <h3 id="completedRides">0</h3>
+            <p>Completed Rides</p>
+        </div>
+
+        <div class="stat-card">
+            <h3 id="activeRides">0</h3>
+            <p>Active Rides</p>
+        </div>
+
+    </div>
+
+
+    <!-- ================= DRIVERS ================= -->
+
+    <div class="section">
+
+        <div class="section-header">
+            <h2>Driver Management</h2>
+
+            <button class="refresh-btn" onclick="loadDrivers()">
+                Refresh
+            </button>
+        </div>
+
+        <div id="driversContainer">
+            <div class="loading">
+                Loading drivers...
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ================= PASSENGERS ================= -->
+
+    <div class="section">
+
+        <div class="section-header">
+            <h2>Passenger Management</h2>
+
+            <button class="refresh-btn" onclick="loadPassengers()">
+                Refresh
+            </button>
+        </div>
+
+        <div id="passengersContainer">
+            <div class="loading">
+                Loading passengers...
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ================= RIDES ================= -->
+
+    <div class="section">
+
+        <div class="section-header">
+            <h2>All Rides</h2>
+
+            <button class="refresh-btn" onclick="loadRides()">
+                Refresh
+            </button>
+        </div>
+
+        <div id="ridesContainer">
+            <div class="loading">
+                Loading rides...
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div id="message" class="message"></div>
+
+
+<script>
+
+    /* =========================================
+       CONFIG
+    ========================================= */
+
+    const API = "http://localhost:5000";
+
+    const TOKEN = localStorage.getItem("udanToken");
+
+    let USER = null;
+
+    try {
+        USER = JSON.parse(localStorage.getItem("udanUser"));
+    } catch (error) {
+        USER = null;
+    }
+
+
+    /* =========================================
+       CHECK ADMIN LOGIN
+    ========================================= */
+
+    if (!TOKEN || !USER || USER.role !== "admin") {
+
+        alert("Admin login required.");
+
+        window.location.href = "login.html";
+
+    }
+
+
+    /* =========================================
+       ADMIN INFO
+    ========================================= */
+
+    if (USER) {
+
+        document.getElementById("adminInfo").innerText =
+            `Logged in as: ${USER.name || "Admin"} | ${USER.email || USER.phone || ""}`;
+
+    }
+
+
+    /* =========================================
+       AUTH HEADER
+    ========================================= */
+
+    function headers() {
+
+        return {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${TOKEN}`
+        };
+
+    }
+
+
+    /* =========================================
+       HTML ESCAPE
+    ========================================= */
+
+    function escapeHTML(value) {
+
+        if (value === null || value === undefined) {
+            return "";
+        }
+
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    /* =========================================
+       MESSAGE
+    ========================================= */
+
+    function showMessage(text, type = "success") {
+
+        const box = document.getElementById("message");
+
+        box.innerText = text;
+
+        box.className = "message " + type;
+
+        box.style.display = "block";
+
+        setTimeout(() => {
+
+            box.style.display = "none";
+
+        }, 3000);
+
+    }
+
+
+    /* =========================================
+       API REQUEST
+    ========================================= */
+
+    async function apiRequest(url, options = {}) {
+
+        try {
+
+            const response = await fetch(API + url, {
+
+                ...options,
+
+                headers: {
+                    ...headers(),
+                    ...(options.headers || {})
+                }
+
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message || data.error || "Request failed"
+                );
+
+            }
+
+            return data;
+
+        } catch (error) {
+
+            console.error(error);
+
+            showMessage(error.message, "error");
+
+            throw error;
+
+        }
+
+    }
+
+
+    /* =========================================
+       LOAD STATS
+    ========================================= */
+
+    async function loadStats() {
+
+        try {
+
+            const data = await apiRequest("/api/admin/stats");
+
+            document.getElementById("totalUsers").innerText =
+                data.totalUsers ?? 0;
+
+            document.getElementById("totalDrivers").innerText =
+                data.totalDrivers ?? 0;
+
+            document.getElementById("totalPassengers").innerText =
+                data.totalPassengers ?? 0;
+
+            document.getElementById("totalRides").innerText =
+                data.totalRides ?? 0;
+
+            document.getElementById("completedRides").innerText =
+                data.completedRides ?? 0;
+
+            document.getElementById("activeRides").innerText =
+                data.activeRides ?? 0;
+
+        } catch (error) {
+
+            console.error("Stats error:", error);
+
+        }
+
+    }
+
+
+    /* =========================================
+       LOAD DRIVERS
+    ========================================= */
+
+    async function loadDrivers() {
+
+        const container =
+            document.getElementById("driversContainer");
+
+        container.innerHTML =
+            '<div class="loading">Loading drivers...</div>';
+
+        try {
+
+            const data = await apiRequest("/api/admin/drivers");
+
+            const drivers = data.drivers || [];
+
+            if (drivers.length === 0) {
+
+                container.innerHTML =
+                    '<div class="empty">No drivers found.</div>';
+
+                return;
+
+            }
+
+            let html = `
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Vehicle</th>
+                            <th>Vehicle No.</th>
+                            <th>Online</th>
+                            <th>Approval</th>
+                            <th>Blocked</th>
+                            <th>Rating</th>
+                            <th>Actions</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+            `;
+
+
+            drivers.forEach(driver => {
+
+                const id = driver._id;
+
+                html += `
+
+                    <tr>
+
+                        <td>
+                            ${escapeHTML(driver.name)}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(driver.phone)}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(driver.email || "-")}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(driver.vehicleType || "-")}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(driver.vehicleNumber || "-")}
+                        </td>
+
+                        <td>
+
+                            ${
+                                driver.online
+                                ?
+                                '<span class="badge online">ONLINE</span>'
+                                :
+                                '<span class="badge offline">OFFLINE</span>'
+                            }
+
+                        </td>
+
+                        <td>
+
+                            ${
+                                driver.approved
+                                ?
+                                '<span class="badge approved">APPROVED</span>'
+                                :
+                                '<span class="badge pending">PENDING</span>'
+                            }
+
+                        </td>
+
+                        <td>
+
+                            ${
+                                driver.blocked
+                                ?
+                                '<span class="badge blocked">BLOCKED</span>'
+                                :
+                                '<span class="badge approved">ACTIVE</span>'
+                            }
+
+                        </td>
+
+                        <td>
+                            ⭐ ${Number(driver.rating || 0).toFixed(1)}
+                        </td>
+
+                        <td>
+
+                            ${
+                                driver.approved
+
+                                ?
+
+                                `
+                                <button
+                                    class="action-btn remove-btn"
+                                    onclick="approveDriver('${id}', false)"
+                                >
+                                    Remove Approval
+                                </button>
+                                `
+
+                                :
+
+                                `
+                                <button
+                                    class="action-btn approve-btn"
+                                    onclick="approveDriver('${id}', true)"
+                                >
+                                    Approve
+                                </button>
+                                `
+                            }
+
+
+                            ${
+                                driver.blocked
+
+                                ?
+
+                                `
+                                <button
+                                    class="action-btn unblock-btn"
+                                    onclick="blockDriver('${id}', false)"
+                                >
+                                    Unblock
+                                </button>
+                                `
+
+                                :
+
+                                `
+                                <button
+                                    class="action-btn block-btn"
+                                    onclick="blockDriver('${id}', true)"
+                                >
+                                    Block
+                                </button>
+                                `
+                            }
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            });
+
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = html;
+
+        } catch (error) {
+
+            container.innerHTML =
+                '<div class="empty">Unable to load drivers.</div>';
+
+        }
+
+    }
+
+
+    /* =========================================
+       APPROVE / REMOVE DRIVER
+    ========================================= */
+
+    async function approveDriver(id, approved) {
+
+        const action =
+            approved ? "approve" : "remove approval from";
+
+        const confirmed = confirm(
+            `Are you sure you want to ${action} this driver?`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+
+            await apiRequest(
+                `/api/admin/drivers/${id}/approve`,
+                {
+                    method: "POST",
+                    body: JSON.stringify({
+                        approved: approved
+                    })
+                }
+            );
+
+            showMessage(
+                approved
+                    ? "Driver approved successfully."
+                    : "Driver approval removed."
+            );
+
+            await loadDrivers();
+
+            await loadStats();
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+
+    /* =========================================
+       BLOCK / UNBLOCK DRIVER
+    ========================================= */
+
+    async function blockDriver(id, blocked) {
+
+        const action =
+            blocked ? "block" : "unblock";
+
+        const confirmed = confirm(
+            `Are you sure you want to ${action} this driver?`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+
+            await apiRequest(
+                `/api/admin/drivers/${id}/block`,
+                {
+                    method: "POST",
+                    body: JSON.stringify({
+                        blocked: blocked
+                    })
+                }
+            );
+
+            showMessage(
+                blocked
+                    ? "Driver blocked successfully."
+                    : "Driver unblocked successfully."
+            );
+
+            await loadDrivers();
+
+            await loadStats();
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+
+    /* =========================================
+       LOAD PASSENGERS
+    ========================================= */
+
+    async function loadPassengers() {
+
+        const container =
+            document.getElementById("passengersContainer");
+
+        container.innerHTML =
+            '<div class="loading">Loading passengers...</div>';
+
+        try {
+
+            const data =
+                await apiRequest("/api/admin/passengers");
+
+            const passengers =
+                data.passengers || [];
+
+            if (passengers.length === 0) {
+
+                container.innerHTML =
+                    '<div class="empty">No passengers found.</div>';
+
+                return;
+
+            }
+
+            let html = `
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Rating</th>
+                            <th>Actions</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+            `;
+
+
+            passengers.forEach(passenger => {
+
+                const id = passenger._id;
+
+                html += `
+
+                    <tr>
+
+                        <td>
+                            ${escapeHTML(passenger.name)}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(passenger.phone)}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(passenger.email || "-")}
+                        </td>
+
+                        <td>
+
+                            ${
+                                passenger.blocked
+                                ?
+                                '<span class="badge blocked">BLOCKED</span>'
+                                :
+                                '<span class="badge approved">ACTIVE</span>'
+                            }
+
+                        </td>
+
+                        <td>
+                            ⭐ ${Number(passenger.rating || 0).toFixed(1)}
+                        </td>
+
+                        <td>
+
+                            ${
+                                passenger.blocked
+
+                                ?
+
+                                `
+                                <button
+                                    class="action-btn unblock-btn"
+                                    onclick="blockPassenger('${id}', false)"
+                                >
+                                    Unblock
+                                </button>
+                                `
+
+                                :
+
+                                `
+                                <button
+                                    class="action-btn block-btn"
+                                    onclick="blockPassenger('${id}', true)"
+                                >
+                                    Block
+                                </button>
+                                `
+                            }
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            });
+
+
+            html += `
+
+                    </tbody>
+
+                </table>
+
+            `;
+
+            container.innerHTML = html;
+
+        } catch (error) {
+
+            container.innerHTML =
+                '<div class="empty">Unable to load passengers.</div>';
+
+        }
+
+    }
+
+
+    /* =========================================
+       BLOCK / UNBLOCK PASSENGER
+    ========================================= */
+
+    async function blockPassenger(id, blocked) {
+
+        const action =
+            blocked ? "block" : "unblock";
+
+        const confirmed = confirm(
+            `Are you sure you want to ${action} this passenger?`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+
+            await apiRequest(
+                `/api/admin/users/${id}/block`,
+                {
+                    method: "POST",
+                    body: JSON.stringify({
+                        blocked: blocked
+                    })
+                }
+            );
+
+            showMessage(
+                blocked
+                    ? "Passenger blocked successfully."
+                    : "Passenger unblocked successfully."
+            );
+
+            await loadPassengers();
+
+            await loadStats();
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+
+    /* =========================================
+       LOAD RIDES
+    ========================================= */
+
+    async function loadRides() {
+
+        const container =
+            document.getElementById("ridesContainer");
+
+        container.innerHTML =
+            '<div class="loading">Loading rides...</div>';
+
+        try {
+
+            const data =
+                await apiRequest("/api/admin/rides");
+
+            const rides =
+                data.rides || [];
+
+            if (rides.length === 0) {
+
+                container.innerHTML =
+                    '<div class="empty">No rides found.</div>';
+
+                return;
+
+            }
+
+            let html = `
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Date</th>
+                            <th>Passenger</th>
+                            <th>Driver</th>
+                            <th>Pickup</th>
+                            <th>Destination</th>
+                            <th>Cab</th>
+                            <th>Fare</th>
+                            <th>Status</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+            `;
+
+
+            rides.forEach(ride => {
+
+                const passenger =
+                    ride.passenger || {};
+
+                const driver =
+                    ride.driver || {};
+
+
+                let statusClass = "active";
+
+                if (ride.status === "completed") {
+                    statusClass = "completed";
+                }
+
+                if (ride.status === "cancelled") {
+                    statusClass = "cancelled";
+                }
+
+
+                const date =
+                    ride.createdAt
+                    ?
+                    new Date(ride.createdAt).toLocaleString()
+                    :
+                    "-";
+
+
+                html += `
+
+                    <tr>
+
+                        <td>
+                            ${escapeHTML(date)}
+                        </td>
+
+                        <td>
+
+                            ${escapeHTML(
+                                passenger.name || "Unknown"
+                            )}
+
+                            <br>
+
+                            <small>
+                                ${escapeHTML(
+                                    passenger.phone || ""
+                                )}
+                            </small>
+
+                        </td>
+
+                        <td>
+
+                            ${
+                                driver.name
+                                ?
+                                escapeHTML(driver.name)
+                                :
+                                "Not Assigned"
+                            }
+
+                            <br>
+
+                            <small>
+                                ${
+                                    driver.phone
+                                    ?
+                                    escapeHTML(driver.phone)
+                                    :
+                                    ""
+                                }
+                            </small>
+
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                ride.pickup || "-"
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                ride.destination || "-"
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                ride.cabType || "-"
+                            )}
+                        </td>
+
+                        <td>
+                            ₹${Number(
+                                ride.fare || 0
+                            ).toFixed(2)}
+                        </td>
+
+                        <td>
+
+                            <span
+                                class="badge ${statusClass}"
+                            >
+                                ${escapeHTML(
+                                    String(
+                                        ride.status || "unknown"
+                                    ).toUpperCase()
+                                )}
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            });
+
+
+            html += `
+
+                    </tbody>
+
+                </table>
+
+            `;
+
+            container.innerHTML = html;
+
+        } catch (error) {
+
+            container.innerHTML =
+                '<div class="empty">Unable to load rides.</div>';
+
+        }
+
+    }
+
+
+    /* =========================================
+       LOGOUT
+    ========================================= */
+
+    function logout() {
+
+        localStorage.removeItem("udanToken");
+
+        localStorage.removeItem("udanUser");
+
+        window.location.href = "login.html";
+
+    }
+
+
+    /* =========================================
+       INITIAL LOAD
+    ========================================= */
+
+    async function init() {
+
+        await loadStats();
+
+        await loadDrivers();
+
+        await loadPassengers();
+
+        await loadRides();
+
+    }
+
+
+    init();
+
+
+    /* =========================================
+       AUTO REFRESH
+    ========================================= */
+
+    setInterval(() => {
+
+        loadStats();
+
+        loadDrivers();
+
+        loadPassengers();
+
+        loadRides();
+
+    }, 30000);
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>UDAN CAB</title>
+
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f5f5f5;
+}
+
+.navbar{
+    height:70px;
+    background:#111;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 7%;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:bold;
+}
+
+.logo span{
+    color:#ffd000;
+}
+
+.nav-links{
+    display:flex;
+    gap:30px;
+}
+
+.nav-links a{
+    color:white;
+    text-decoration:none;
+}
+
+.login-btn{
+    background:#ffd000;
+    color:black;
+    padding:10px 20px;
+    border-radius:6px;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.hero{
+    min-height:600px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:50px 7%;
+    background:linear-gradient(120deg,#111 50%,#222 50%);
+    color:white;
+}
+
+.hero-text{
+    width:50%;
+}
+
+.hero-text h1{
+    font-size:55px;
+    margin-bottom:20px;
+}
+
+.hero-text h1 span{
+    color:#ffd000;
+}
+
+.hero-text p{
+    font-size:20px;
+    color:#ddd;
+    line-height:1.6;
+    margin-bottom:30px;
+}
+
+.book-btn{
+    padding:15px 30px;
+    background:#ffd000;
+    border:none;
+    border-radius:8px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.booking-box{
+    width:390px;
+    background:white;
+    color:black;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
+}
+
+.booking-box h2{
+    margin-bottom:20px;
+}
+
+.input-box{
+    margin-bottom:15px;
+}
+
+.input-box label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:bold;
+}
+
+.input-box input{
+    width:100%;
+    padding:13px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    font-size:15px;
+}
+
+.location-btn{
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    background:white;
+    color:#111;
+    border:2px solid #111;
+    border-radius:6px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.search-btn{
+    width:100%;
+    padding:14px;
+    background:#111;
+    color:white;
+    border:none;
+    border-radius:6px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+#mapSection{
+    display:none;
+    background:white;
+    padding:50px 7%;
+    text-align:center;
+}
+
+#mapSection h2{
+    font-size:32px;
+    margin-bottom:10px;
+}
+
+.map-info{
+    color:#666;
+    margin-bottom:20px;
+}
+
+#map{
+    width:100%;
+    height:450px;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.15);
+}
+
+.route-info{
+    margin-top:20px;
+    display:flex;
+    justify-content:center;
+    gap:30px;
+    flex-wrap:wrap;
+}
+
+.info-card{
+    background:#f5f5f5;
+    padding:20px 30px;
+    border-radius:10px;
+    min-width:180px;
+}
+
+.info-card h3{
+    font-size:15px;
+    color:#666;
+    margin-bottom:8px;
+}
+
+.info-card p{
+    font-size:22px;
+    font-weight:bold;
+}
+
+#cabResults{
+    display:none;
+    background:white;
+    padding:60px 7%;
+    text-align:center;
+}
+
+#cabResults h2{
+    font-size:35px;
+    margin-bottom:10px;
+}
+
+.route{
+    color:#666;
+    margin-bottom:35px;
+}
+
+.cab-container{
+    display:flex;
+    justify-content:center;
+    gap:25px;
+    flex-wrap:wrap;
+}
+
+.cab-card{
+    width:260px;
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 5px 20px rgba(0,0,0,.12);
+    border:1px solid #eee;
+}
+
+.cab-icon{
+    font-size:55px;
+}
+
+.cab-card h3{
+    margin:15px 0 8px;
+}
+
+.cab-card p{
+    color:#666;
+    margin-bottom:8px;
+}
+
+.price{
+    font-size:22px;
+    font-weight:bold;
+    margin:15px 0;
+}
+
+.select-btn{
+    width:100%;
+    padding:12px;
+    background:#ffd000;
+    border:none;
+    border-radius:6px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+#confirmation{
+    display:none;
+    padding:60px 7%;
+    text-align:center;
+}
+
+.confirmation-box{
+    max-width:500px;
+    margin:auto;
+    background:white;
+    padding:35px;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.1);
+}
+
+.success{
+    font-size:55px;
+    margin-bottom:15px;
+}
+
+.services{
+    padding:60px 7%;
+    text-align:center;
+}
+
+.services h2{
+    font-size:35px;
+    margin-bottom:40px;
+}
+
+.service-container{
+    display:flex;
+    justify-content:center;
+    gap:25px;
+    flex-wrap:wrap;
+}
+
+.service-card{
+    background:white;
+    width:250px;
+    padding:30px 20px;
+    border-radius:12px;
+    box-shadow:0 5px 20px rgba(0,0,0,.1);
+}
+
+.icon{
+    font-size:45px;
+}
+
+.service-card h3{
+    margin:15px 0;
+}
+
+.service-card p{
+    color:#666;
+}
+
+footer{
+    background:#111;
+    color:white;
+    text-align:center;
+    padding:25px;
+}
+
+@media(max-width:800px){
+
+    .nav-links{
+        display:none;
+    }
+
+    .hero{
+        flex-direction:column;
+        gap:40px;
+    }
+
+    .hero-text{
+        width:100%;
+    }
+
+    .hero-text h1{
+        font-size:40px;
+    }
+
+    .booking-box{
+        width:100%;
+    }
+
+    #map{
+        height:350px;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+<div class="logo">
+UDAN<span>CAB</span>
+</div>
+
+<div class="nav-links">
+
+<a href="#">Home</a>
+
+<a href="#mapSection">Ride</a>
+
+<a href="#services">Services</a>
+
+<a href="#">About</a>
+
+<a href="#">Contact</a>
+
+</div>
+
+<a href="login.html" class="login-btn">
+Login
+</a>
+
+</nav>
+
+
+<section class="hero">
+
+<div class="hero-text">
+
+<h1>
+Your Ride.<br>
+<span>Your Way.</span>
+</h1>
+
+<p>
+Book a comfortable and affordable
+cab anytime, anywhere.
+</p>
+
+<button
+class="book-btn"
+onclick="document.getElementById('pickup').focus()">
+
+Book a Ride
+
+</button>
+
+</div>
+
+
+<div class="booking-box">
+
+<h2>Book Your Ride</h2>
+
+<div class="input-box">
+
+<label>Pickup Location</label>
+
+<input
+type="text"
+id="pickup"
+placeholder="Enter pickup location">
+
+</div>
+
+
+<button
+class="location-btn"
+onclick="useCurrentLocation()">
+
+📍 Use My Current Location
+
+</button>
+
+
+<div class="input-box">
+
+<label>Destination</label>
+
+<input
+type="text"
+id="destination"
+placeholder="Enter destination">
+
+</div>
+
+
+<button
+class="search-btn"
+onclick="findRide()">
+
+Find a Ride
+
+</button>
+
+</div>
+
+</section>
+
+
+<section id="mapSection">
+
+<h2>Your Route</h2>
+
+<p class="map-info">
+Pickup to destination route
+</p>
+
+<div id="map"></div>
+
+
+<div class="route-info">
+
+<div class="info-card">
+
+<h3>Distance</h3>
+
+<p id="distanceText">
+0 km
+</p>
+
+</div>
+
+
+<div class="info-card">
+
+<h3>Estimated Time</h3>
+
+<p id="timeText">
+0 min
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<section id="cabResults">
+
+<h2>Choose Your Ride</h2>
+
+<p
+class="route"
+id="routeText">
+
+Pickup → Destination
+
+</p>
+
+
+<div class="cab-container">
+
+
+<div class="cab-card">
+
+<div class="cab-icon">
+🚗
+</div>
+
+<h3>Mini Car</h3>
+
+<p>Affordable ride</p>
+
+<div
+class="price"
+id="miniPrice">
+
+₹0
+
+</div>
+
+<button
+class="select-btn"
+onclick="selectCab('Mini Car')">
+
+Select
+
+</button>
+
+</div>
+
+
+<div class="cab-card">
+
+<div class="cab-icon">
+🚘
+</div>
+
+<h3>Sedan</h3>
+
+<p>Comfortable ride</p>
+
+<div
+class="price"
+id="sedanPrice">
+
+₹0
+
+</div>
+
+<button
+class="select-btn"
+onclick="selectCab('Sedan')">
+
+Select
+
+</button>
+
+</div>
+
+
+<div class="cab-card">
+
+<div class="cab-icon">
+🛺
+</div>
+
+<h3>Auto</h3>
+
+<p>Quick city ride</p>
+
+<div
+class="price"
+id="autoPrice">
+
+₹0
+
+</div>
+
+<button
+class="select-btn"
+onclick="selectCab('Auto')">
+
+Select
+
+</button>
+
+</div>
+
+
+<div class="cab-card">
+
+<div class="cab-icon">
+🏍️
+</div>
+
+<h3>Bike</h3>
+
+<p>Fast and economical</p>
+
+<div
+class="price"
+id="bikePrice">
+
+₹0
+
+</div>
+
+<button
+class="select-btn"
+onclick="selectCab('Bike')">
+
+Select
+
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<section id="confirmation">
+
+<div class="confirmation-box">
+
+<div class="success">
+✅
+</div>
+
+<h2>
+Ride Booking
+</h2>
+
+<p
+id="selectedCab"
+style="margin-top:20px;">
+Cab:
+</p>
+
+<p
+id="selectedRoute"
+style="margin-top:10px;">
+Route:
+</p>
+
+<p
+id="selectedFare"
+style="margin-top:10px;">
+Total Fare:
+</p>
+
+<br>
+
+<p>
+Your ride request has been sent to nearby drivers.
+</p>
+
+<br>
+
+<button
+class="select-btn"
+onclick="location.href='driver.html'">
+
+Driver Dashboard
+
+</button>
+
+</div>
+
+</section>
+
+
+<section
+class="services"
+id="services">
+
+<h2>
+Our Services
+</h2>
+
+
+<div class="service-container">
+
+
+<div class="service-card">
+
+<div class="icon">
+🚕
+</div>
+
+<h3>
+Cab Booking
+</h3>
+
+<p>
+Book affordable rides quickly.
+</p>
+
+</div>
+
+
+<div class="service-card">
+
+<div class="icon">
+📦
+</div>
+
+<h3>
+Parcel Delivery
+</h3>
+
+<p>
+Send parcels safely and quickly.
+</p>
+
+</div>
+
+
+<div class="service-card">
+
+<div class="icon">
+📍
+</div>
+
+<h3>
+Live Tracking
+</h3>
+
+<p>
+Track your driver location.
+</p>
+
+</div>
+
+
+<div class="service-card">
+
+<div class="icon">
+💰
+</div>
+
+<h3>
+Affordable Fare
+</h3>
+
+<p>
+Simple and transparent pricing.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<footer>
+
+<p>
+© 2026 UDAN CAB. All Rights Reserved.
+</p>
+
+</footer>
+
+
+<script
+src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+
+<script>
+
+let map = null;
+
+let pickupMarker = null;
+
+let destinationMarker = null;
+
+let routeLine = null;
+
+let routeDistance = 0;
+
+let currentLatitude = null;
+
+let currentLongitude = null;
+
+
+async function getCoordinates(place){
+
+    const url =
+    "https://nominatim.openstreetmap.org/search?format=json&limit=1&q="
+    + encodeURIComponent(place);
+
+    const response =
+    await fetch(url);
+
+    const data =
+    await response.json();
+
+    if(!data.length){
+        throw new Error(
+            "Location not found: " + place
+        );
+    }
+
+    return {
+        lat:parseFloat(data[0].lat),
+        lon:parseFloat(data[0].lon)
+    };
+}
+
+
+function useCurrentLocation(){
+
+    if(!navigator.geolocation){
+
+        alert(
+            "Geolocation is not supported by your browser."
+        );
+
+        return;
+    }
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        async function(position){
+
+            currentLatitude =
+                position.coords.latitude;
+
+            currentLongitude =
+                position.coords.longitude;
+
+
+            try{
+
+                const response =
+                await fetch(
+                    "https://nominatim.openstreetmap.org/reverse?format=json&lat="
+                    + currentLatitude
+                    + "&lon="
+                    + currentLongitude
+                );
+
+
+                const data =
+                await response.json();
+
+
+                const address =
+                data.display_name
+                || (
+                    currentLatitude
+                    + ", "
+                    + currentLongitude
+                );
+
+
+                document
+                .getElementById("pickup")
+                .value = address;
+
+
+            }catch(error){
+
+                document
+                .getElementById("pickup")
+                .value =
+                    currentLatitude
+                    + ", "
+                    + currentLongitude;
+
+            }
+
+        },
+
+        function(){
+
+            alert(
+                "Unable to get your current location."
+            );
+
+        }
+
+    );
+
+}
+
+
+async function findRide(){
+
+    const pickup =
+        document
+        .getElementById("pickup")
+        .value
+        .trim();
+
+
+    const destination =
+        document
+        .getElementById("destination")
+        .value
+        .trim();
+
+
+    if(!pickup || !destination){
+
+        alert(
+            "Please enter pickup and destination."
+        );
+
+        return;
+    }
+
+
+    try{
+
+        const pickupCoords =
+            await getCoordinates(pickup);
+
+
+        const destinationCoords =
+            await getCoordinates(destination);
+
+
+        await showRoute(
+            pickup,
+            destination,
+            pickupCoords.lat,
+            pickupCoords.lon,
+            destinationCoords.lat,
+            destinationCoords.lon
+        );
+
+
+    }catch(error){
+
+        alert(
+            "❌ " + error.message
+        );
+
+    }
+
+}
+
+
+async function showRoute(
+    pickupName,
+    destinationName,
+    pickupLat,
+    pickupLng,
+    destinationLat,
+    destinationLng
+){
+
+    document
+    .getElementById("mapSection")
+    .style.display = "block";
+
+
+    if(!map){
+
+        map =
+            L.map("map");
+
+
+        L.tileLayer(
+
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+
+            {
+
+                attribution:
+                "&copy; OpenStreetMap contributors"
+
+            }
+
+        ).addTo(map);
+
+    }
+
+
+    if(pickupMarker){
+
+        map.removeLayer(
+            pickupMarker
+        );
+
+    }
+
+
+    if(destinationMarker){
+
+        map.removeLayer(
+            destinationMarker
+        );
+
+    }
+
+
+    if(routeLine){
+
+        map.removeLayer(
+            routeLine
+        );
+
+    }
+
+
+    pickupMarker =
+        L.marker([
+            pickupLat,
+            pickupLng
+        ])
+        .addTo(map)
+        .bindPopup(
+            "📍 " + pickupName
+        )
+        .openPopup();
+
+
+    destinationMarker =
+        L.marker([
+            destinationLat,
+            destinationLng
+        ])
+        .addTo(map)
+        .bindPopup(
+            "🏁 " + destinationName
+        );
+
+
+    const routeURL =
+
+        "https://router.project-osrm.org/route/v1/driving/"
+
+        + pickupLng
+        + ","
+        + pickupLat
+
+        + ";"
+
+        + destinationLng
+        + ","
+        + destinationLat
+
+        + "?overview=full&geometries=geojson";
+
+
+    const response =
+        await fetch(routeURL);
+
+
+    const data =
+        await response.json();
+
+
+    if(
+        data.routes &&
+        data.routes.length > 0
+    ){
+
+        const route =
+            data.routes[0];
+
+
+        routeDistance =
+            route.distance / 1000;
+
+
+        const timeMinutes =
+            Math.round(
+                route.duration / 60
+            );
+
+
+        document
+        .getElementById("distanceText")
+        .innerText =
+            routeDistance.toFixed(2)
+            + " km";
+
+
+        document
+        .getElementById("timeText")
+        .innerText =
+            timeMinutes
+            + " min";
+
+
+        routeLine =
+            L.geoJSON(
+                route.geometry
+            )
+            .addTo(map);
+
+
+        map.fitBounds(
+            routeLine.getBounds()
+        );
+
+
+        calculateFares(
+            routeDistance
+        );
+
+    }
+
+
+    document
+    .getElementById("mapSection")
+    .scrollIntoView({
+        behavior:"smooth"
+    });
+
+}
+
+
+function calculateFares(distance){
+
+    const mini =
+        Math.round(
+            distance * 12
+        );
+
+
+    const sedan =
+        Math.round(
+            distance * 15
+        );
+
+
+    const auto =
+        Math.round(
+            distance * 10
+        );
+
+
+    const bike =
+        Math.round(
+            distance * 8
+        );
+
+
+    document
+    .getElementById("miniPrice")
+    .innerText =
+        "₹" + mini;
+
+
+    document
+    .getElementById("sedanPrice")
+    .innerText =
+        "₹" + sedan;
+
+
+    document
+    .getElementById("autoPrice")
+    .innerText =
+        "₹" + auto;
+
+
+    document
+    .getElementById("bikePrice")
+    .innerText =
+        "₹" + bike;
+
+
+    const pickup =
+        document
+        .getElementById("pickup")
+        .value;
+
+
+    const destination =
+        document
+        .getElementById("destination")
+        .value;
+
+
+    document
+    .getElementById("routeText")
+    .innerText =
+
+        pickup
+        + " → "
+        + destination;
+
+
+    document
+    .getElementById("cabResults")
+    .style.display =
+        "block";
+
+
+    document
+    .getElementById("cabResults")
+    .scrollIntoView({
+        behavior:"smooth"
+    });
+
+}
+
+
+async function selectCab(cabName){
+
+    if(!UDAN_TOKEN){
+
+        location.href =
+            "login.html";
+
+        return;
+    }
+
+
+    const rates = {
+
+        "Mini Car":12,
+
+        "Sedan":15,
+
+        "Auto":10,
+
+        "Bike":8
+
+    };
+
+
+    const fare =
+        Math.round(
+            routeDistance
+            * rates[cabName]
+        );
+
+
+    const pickup =
+        document
+        .getElementById("pickup")
+        .value
+        .trim();
+
+
+    const destination =
+        document
+        .getElementById("destination")
+        .value
+        .trim();
+
+
+    try{
+
+        const response =
+            await fetch(
+                UDAN_API + "/api/rides",
+                {
+
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json",
+
+                        "Authorization":
+                            "Bearer "
+                            + UDAN_TOKEN
+                    },
+
+                    body:
+                    JSON.stringify({
+
+                        pickup,
+
+                        destination,
+
+                        cabType:cabName,
+
+                        vehicleType:
+                            cabName === "Auto"
+                            ? "Auto"
+                            : cabName === "Bike"
+                            ? "Bike"
+                            : "4-Seater Car",
+
+                        fare,
+
+                        pickupLatitude:
+                            currentLatitude,
+
+                        pickupLongitude:
+                            currentLongitude
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+                || "Booking failed"
+            );
+
+        }
+
+
+        document
+        .getElementById("selectedCab")
+        .innerText =
+            "Cab: "
+            + cabName;
+
+
+        document
+        .getElementById("selectedRoute")
+        .innerText =
+            "Route: "
+            + pickup
+            + " → "
+            + destination;
+
+
+        document
+        .getElementById("selectedFare")
+        .innerText =
+            "Total Fare: ₹"
+            + fare
+            + " | Ride ID: "
+            + data.ride._id;
+
+
+        document
+        .getElementById("confirmation")
+        .style.display =
+            "block";
+
+
+        document
+        .getElementById("confirmation")
+        .scrollIntoView({
+            behavior:"smooth"
+        });
+
+
+        localStorage.setItem(
+            "udanCurrentRide",
+            data.ride._id
+        );
+
+
+        alert(
+            "🎉 Ride booked successfully!"
+        );
+
+
+    }catch(error){
+
+        alert(
+            "❌ " + error.message
+        );
+
+
+        if(
+            String(error.message)
+            .toLowerCase()
+            .includes("token")
+        ){
+
+            location.href =
+                "login.html";
+
+        }
+
+    }
+
+}
+
+
+function logout(){
+
+    localStorage.removeItem(
+        "udanToken"
+    );
+
+    localStorage.removeItem(
+        "udanUser"
+    );
+
+    localStorage.removeItem(
+        "udanCurrentRide"
+    );
+
+
+    location.href =
+        "login.html";
+
+}
+
+
+const UDAN_API =
+    "http://localhost:5000";
+
+
+const UDAN_TOKEN =
+    localStorage.getItem(
+        "udanToken"
+    );
+
+
+const UDAN_USER =
+    JSON.parse(
+        localStorage.getItem(
+            "udanUser"
+        )
+        || "null"
+    );
+
+
+if(
+    !UDAN_TOKEN
+    ||
+    !UDAN_USER
+    ||
+    (
+        UDAN_USER.role !== "user"
+        &&
+        UDAN_USER.role !== "passenger"
+    )
+){
+
+    /*
+       Login check is intentionally
+       delayed until the user tries
+       to book a ride.
+    */
+
+}
+
+</script>
+
+</body>
+
+</html>

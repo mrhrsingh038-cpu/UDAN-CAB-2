@@ -1,0 +1,2055 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>UDAN CAB - Driver Dashboard</title>
+
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f5f7;
+    color:#222;
+}
+
+.navbar{
+    height:70px;
+    background:#111;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 6%;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:bold;
+}
+
+.logo span{
+    color:#ffd000;
+}
+
+.nav-right{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.driver-name{
+    color:#ddd;
+}
+
+.logout-btn{
+    border:none;
+    background:#ffd000;
+    color:#111;
+    padding:10px 18px;
+    border-radius:6px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.container{
+    width:90%;
+    max-width:1200px;
+    margin:30px auto;
+}
+
+.header-card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.header-card h1{
+    margin-bottom:8px;
+}
+
+.header-card p{
+    color:#666;
+}
+
+.status-area{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.status-text{
+    font-weight:bold;
+}
+
+.toggle{
+    width:62px;
+    height:32px;
+    background:#bbb;
+    border-radius:20px;
+    position:relative;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.toggle.active{
+    background:#19a34a;
+}
+
+.toggle-circle{
+    width:26px;
+    height:26px;
+    background:white;
+    border-radius:50%;
+    position:absolute;
+    top:3px;
+    left:4px;
+    transition:.2s;
+}
+
+.toggle.active .toggle-circle{
+    left:32px;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin:25px 0;
+}
+
+.stat{
+    background:white;
+    padding:22px;
+    border-radius:12px;
+    box-shadow:0 5px 15px rgba(0,0,0,.06);
+}
+
+.stat h3{
+    color:#777;
+    font-size:14px;
+    margin-bottom:8px;
+}
+
+.stat p{
+    font-size:28px;
+    font-weight:bold;
+}
+
+.section-title{
+    margin:30px 0 15px;
+}
+
+.ride-container{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+}
+
+.ride-card{
+    background:white;
+    border-radius:14px;
+    padding:22px;
+    box-shadow:0 5px 18px rgba(0,0,0,.08);
+}
+
+.ride-card h3{
+    margin-bottom:15px;
+}
+
+.location{
+    padding:12px;
+    background:#f6f6f6;
+    border-radius:7px;
+    margin:7px 0;
+}
+
+.location strong{
+    display:block;
+    margin-bottom:4px;
+}
+
+.ride-details{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin:15px 0;
+}
+
+.detail{
+    background:#fafafa;
+    padding:10px;
+    border-radius:6px;
+}
+
+.detail small{
+    display:block;
+    color:#777;
+    margin-bottom:4px;
+}
+
+.detail strong{
+    font-size:16px;
+}
+
+.status-badge{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:20px;
+    background:#fff3c4;
+    color:#775d00;
+    font-size:13px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.btn-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    border:none;
+    padding:11px 18px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.accept-btn{
+    background:#ffd000;
+    color:#111;
+}
+
+.start-btn{
+    background:#1688ff;
+    color:white;
+}
+
+.complete-btn{
+    background:#19a34a;
+    color:white;
+}
+
+.cancel-btn{
+    background:#e53935;
+    color:white;
+}
+
+.refresh-btn{
+    background:#111;
+    color:white;
+}
+
+.btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.empty{
+    background:white;
+    border-radius:12px;
+    padding:40px;
+    text-align:center;
+    color:#777;
+}
+
+#map{
+    width:100%;
+    height:430px;
+    border-radius:15px;
+    margin-top:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.location-panel{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    margin-top:25px;
+    box-shadow:0 5px 15px rgba(0,0,0,.06);
+}
+
+.location-panel h3{
+    margin-bottom:10px;
+}
+
+.location-value{
+    color:#555;
+    line-height:1.6;
+}
+
+.message{
+    display:none;
+    padding:13px;
+    margin:20px 0;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+.message.show{
+    display:block;
+}
+
+.message.success{
+    background:#e4ffe9;
+    color:#08752c;
+}
+
+.message.error{
+    background:#ffe5e5;
+    color:#b40000;
+}
+
+.message.info{
+    background:#e5f2ff;
+    color:#075a99;
+}
+
+@media(max-width:900px){
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .ride-container{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:600px){
+
+    .navbar{
+        padding:0 4%;
+    }
+
+    .logo{
+        font-size:22px;
+    }
+
+    .driver-name{
+        display:none;
+    }
+
+    .container{
+        width:94%;
+    }
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .header-card{
+        align-items:flex-start;
+    }
+
+    .ride-details{
+        grid-template-columns:1fr;
+    }
+
+    #map{
+        height:320px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<nav class="navbar">
+
+<div class="logo">
+UDAN<span>CAB</span>
+</div>
+
+<div class="nav-right">
+
+<span
+class="driver-name"
+id="driverName">
+Driver
+</span>
+
+<button
+class="logout-btn"
+onclick="logout()">
+Logout
+</button>
+
+</div>
+
+</nav>
+
+
+<div class="container">
+
+
+<div
+id="message"
+class="message">
+</div>
+
+
+<div class="header-card">
+
+<div>
+
+<h1>
+Driver Dashboard
+</h1>
+
+<p>
+Manage rides, accept bookings and share your live location.
+</p>
+
+</div>
+
+
+<div class="status-area">
+
+<span
+class="status-text"
+id="statusText">
+Offline
+</span>
+
+<div
+class="toggle"
+id="statusToggle"
+onclick="toggleOnline()">
+
+<div class="toggle-circle">
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="stats">
+
+
+<div class="stat">
+
+<h3>
+Available Rides
+</h3>
+
+<p id="availableCount">
+0
+</p>
+
+</div>
+
+
+<div class="stat">
+
+<h3>
+My Active Ride
+</h3>
+
+<p id="activeCount">
+0
+</p>
+
+</div>
+
+
+<div class="stat">
+
+<h3>
+Completed
+</h3>
+
+<p id="completedCount">
+0
+</p>
+
+</div>
+
+
+<div class="stat">
+
+<h3>
+Rating
+</h3>
+
+<p id="rating">
+5.0
+</p>
+
+</div>
+
+
+</div>
+
+
+<div class="btn-row">
+
+<button
+class="btn refresh-btn"
+onclick="loadRides()">
+
+🔄 Refresh Rides
+
+</button>
+
+<button
+class="btn refresh-btn"
+onclick="startLocationTracking()">
+
+📍 Start GPS
+
+</button>
+
+<button
+class="btn refresh-btn"
+onclick="stopLocationTracking()">
+
+⛔ Stop GPS
+
+</button>
+
+</div>
+
+
+<h2 class="section-title">
+Available & My Rides
+</h2>
+
+
+<div
+id="ridesContainer"
+class="ride-container">
+
+<div class="empty">
+Loading rides...
+</div>
+
+</div>
+
+
+<h2 class="section-title">
+Live Driver Location
+</h2>
+
+
+<div id="map"></div>
+
+
+<div class="location-panel">
+
+<h3>
+Current GPS Location
+</h3>
+
+<div
+id="locationValue"
+class="location-value">
+
+GPS not started.
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<script
+src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+
+<script>
+
+const API =
+    "http://localhost:5000";
+
+
+const TOKEN =
+    localStorage.getItem(
+        "udanToken"
+    );
+
+
+const USER =
+    JSON.parse(
+        localStorage.getItem(
+            "udanUser"
+        ) || "null"
+    );
+
+
+let rides = [];
+
+let watchId = null;
+
+let map = null;
+
+let driverMarker = null;
+
+let currentLatitude = null;
+
+let currentLongitude = null;
+
+
+function authHeaders(){
+
+    return {
+
+        "Content-Type":
+            "application/json",
+
+        "Authorization":
+            "Bearer " + TOKEN
+
+    };
+
+}
+
+
+function showMessage(
+    text,
+    type = "info"
+){
+
+    const box =
+        document.getElementById(
+            "message"
+        );
+
+    box.innerText = text;
+
+    box.className =
+        "message show " + type;
+
+    setTimeout(
+        function(){
+
+            box.className =
+                "message";
+
+        },
+        3500
+    );
+
+}
+
+
+function checkLogin(){
+
+    if(!TOKEN || !USER){
+
+        location.href =
+            "login.html";
+
+        return false;
+
+    }
+
+
+    if(USER.role !== "driver"){
+
+        alert(
+            "This page is only for drivers."
+        );
+
+        location.href =
+            "index.html";
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+function setupUser(){
+
+    document
+    .getElementById(
+        "driverName"
+    )
+    .innerText =
+        USER.name || "Driver";
+
+
+    document
+    .getElementById(
+        "rating"
+    )
+    .innerText =
+        Number(
+            USER.rating || 5
+        ).toFixed(1);
+
+
+    updateOnlineUI(
+        USER.online === true
+    );
+
+}
+
+
+function updateOnlineUI(
+    online
+){
+
+    const toggle =
+        document.getElementById(
+            "statusToggle"
+        );
+
+
+    const text =
+        document.getElementById(
+            "statusText"
+        );
+
+
+    if(online){
+
+        toggle.classList.add(
+            "active"
+        );
+
+        text.innerText =
+            "Online";
+
+    }else{
+
+        toggle.classList.remove(
+            "active"
+        );
+
+        text.innerText =
+            "Offline";
+
+    }
+
+}
+
+
+async function toggleOnline(){
+
+    if(!checkLogin()){
+        return;
+    }
+
+
+    const currentlyOnline =
+        USER.online === true;
+
+
+    const newStatus =
+        !currentlyOnline;
+
+
+    try{
+
+        const response =
+            await fetch(
+                API + "/api/driver/status",
+                {
+
+                    method:"POST",
+
+                    headers:
+                        authHeaders(),
+
+                    body:
+                    JSON.stringify({
+
+                        online:newStatus
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+                || "Unable to change status"
+            );
+
+        }
+
+
+        USER.online =
+            newStatus;
+
+
+        localStorage.setItem(
+            "udanUser",
+            JSON.stringify(USER)
+        );
+
+
+        updateOnlineUI(
+            newStatus
+        );
+
+
+        showMessage(
+            newStatus
+            ? "You are now online."
+            : "You are now offline.",
+            "success"
+        );
+
+
+        await loadRides();
+
+
+    }catch(error){
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+async function loadRides(){
+
+    if(!checkLogin()){
+        return;
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                API + "/api/driver/rides",
+                {
+
+                    headers:
+                        authHeaders()
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+                || "Could not load rides"
+            );
+
+        }
+
+
+        rides =
+            Array.isArray(data.rides)
+            ? data.rides
+            : [];
+
+
+        renderRides();
+
+
+    }catch(error){
+
+        document
+        .getElementById(
+            "ridesContainer"
+        )
+        .innerHTML =
+
+        `<div class="empty">
+            ${escapeHtml(error.message)}
+        </div>`;
+
+    }
+
+}
+
+
+function renderRides(){
+
+    const container =
+        document.getElementById(
+            "ridesContainer"
+        );
+
+
+    if(!rides.length){
+
+        container.innerHTML =
+
+        `<div class="empty">
+            No rides available right now.
+        </div>`;
+
+        updateStats();
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        rides
+        .map(
+            ride => createRideCard(
+                ride
+            )
+        )
+        .join("");
+
+
+    updateStats();
+
+}
+
+
+function createRideCard(
+    ride
+){
+
+    const passenger =
+        ride.passenger || {};
+
+
+    const status =
+        ride.status || "Searching";
+
+
+    let buttons = "";
+
+
+    if(
+        status === "Searching"
+        &&
+        !ride.driver
+    ){
+
+        buttons =
+
+        `<button
+            class="btn accept-btn"
+            onclick="acceptRide('${ride._id}')">
+
+            Accept Ride
+
+        </button>`;
+
+    }
+
+
+    if(
+        status === "Driver accepted"
+        &&
+        ride.driver
+        &&
+        String(
+            getId(ride.driver)
+        ) === String(
+            USER.id || USER.userId
+        )
+    ){
+
+        buttons =
+
+        `<button
+            class="btn start-btn"
+            onclick="startRide('${ride._id}')">
+
+            Start Ride
+
+        </button>`;
+
+    }
+
+
+    if(
+        status === "Ride started"
+        &&
+        ride.driver
+        &&
+        String(
+            getId(ride.driver)
+        ) === String(
+            USER.id || USER.userId
+        )
+    ){
+
+        buttons =
+
+        `<button
+            class="btn complete-btn"
+            onclick="completeRide('${ride._id}')">
+
+            Complete Ride
+
+        </button>`;
+
+    }
+
+
+    return `
+
+    <div class="ride-card">
+
+        <span class="status-badge">
+
+            ${escapeHtml(status)}
+
+        </span>
+
+        <h3>
+            🚕 Ride Request
+        </h3>
+
+
+        <div class="location">
+
+            <strong>
+                📍 Pickup
+            </strong>
+
+            ${escapeHtml(
+                ride.pickup || "Not available"
+            )}
+
+        </div>
+
+
+        <div class="location">
+
+            <strong>
+                🏁 Destination
+            </strong>
+
+            ${escapeHtml(
+                ride.destination || "Not available"
+            )}
+
+        </div>
+
+
+        <div class="ride-details">
+
+
+            <div class="detail">
+
+                <small>
+                    Passenger
+                </small>
+
+                <strong>
+                    ${escapeHtml(
+                        passenger.name
+                        || "Passenger"
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+                <small>
+                    Phone
+                </small>
+
+                <strong>
+                    ${escapeHtml(
+                        passenger.phone
+                        || "Not available"
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+                <small>
+                    Cab Type
+                </small>
+
+                <strong>
+                    ${escapeHtml(
+                        ride.cabType
+                        || ride.vehicleType
+                        || "Cab"
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+                <small>
+                    Fare
+                </small>
+
+                <strong>
+                    ₹${Number(
+                        ride.fare || 0
+                    ).toFixed(0)}
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="btn-row">
+
+            ${buttons}
+
+            ${
+                (
+                    status === "Searching"
+                    ||
+                    status === "Driver accepted"
+                    ||
+                    status === "Ride started"
+                )
+                &&
+                ride.driver
+                &&
+                String(
+                    getId(ride.driver)
+                ) === String(
+                    USER.id || USER.userId
+                )
+                ?
+
+                `<button
+                    class="btn refresh-btn"
+                    onclick="focusRide('${ride._id}')">
+
+                    📍 Track
+
+                </button>`
+
+                : ""
+            }
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+
+function getId(
+    value
+){
+
+    if(!value){
+        return "";
+    }
+
+
+    if(typeof value === "string"){
+        return value;
+    }
+
+
+    return value._id
+        || value.id
+        || value.userId
+        || "";
+
+}
+
+
+function escapeHtml(
+    value
+){
+
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+async function acceptRide(
+    rideId
+){
+
+    if(!USER.online){
+
+        showMessage(
+            "Please go online first.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                API
+                + "/api/rides/"
+                + rideId
+                + "/accept",
+                {
+
+                    method:"POST",
+
+                    headers:
+                        authHeaders()
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+                || "Unable to accept ride"
+            );
+
+        }
+
+
+        showMessage(
+            "Ride accepted successfully.",
+            "success"
+        );
+
+
+        await loadRides();
+
+
+    }catch(error){
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+async function startRide(
+    rideId
+){
+
+    try{
+
+        const response =
+            await fetch(
+                API
+                + "/api/rides/"
+                + rideId
+                + "/start",
+                {
+
+                    method:"PATCH",
+
+                    headers:
+                        authHeaders()
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+                || "Unable to start ride"
+            );
+
+        }
+
+
+        showMessage(
+            "Ride started.",
+            "success"
+        );
+
+
+        await loadRides();
+
+        startLocationTracking();
+
+
+    }catch(error){
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+async function completeRide(
+    rideId
+){
+
+    if(
+        !confirm(
+            "Are you sure you want to complete this ride?"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                API
+                + "/api/rides/"
+                + rideId
+                + "/complete",
+                {
+
+                    method:"PATCH",
+
+                    headers:
+                        authHeaders()
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+                || "Unable to complete ride"
+            );
+
+        }
+
+
+        showMessage(
+            "Ride completed successfully.",
+            "success"
+        );
+
+
+        await loadRides();
+
+    }catch(error){
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+function updateStats(){
+
+    const available =
+        rides.filter(
+            ride =>
+                ride.status === "Searching"
+                &&
+                !ride.driver
+        ).length;
+
+
+    const myActive =
+        rides.filter(
+            ride => {
+
+                const driverId =
+                    getId(
+                        ride.driver
+                    );
+
+
+                const myId =
+                    USER.id
+                    || USER.userId;
+
+
+                return (
+                    String(driverId)
+                    ===
+                    String(myId)
+                )
+                &&
+                (
+                    ride.status ===
+                        "Driver accepted"
+                    ||
+                    ride.status ===
+                        "Ride started"
+                );
+
+            }
+        ).length;
+
+
+    const completed =
+        rides.filter(
+            ride => {
+
+                const driverId =
+                    getId(
+                        ride.driver
+                    );
+
+
+                const myId =
+                    USER.id
+                    || USER.userId;
+
+
+                return (
+                    String(driverId)
+                    ===
+                    String(myId)
+                )
+                &&
+                ride.status ===
+                    "Completed";
+
+            }
+        ).length;
+
+
+    document
+    .getElementById(
+        "availableCount"
+    )
+    .innerText =
+        available;
+
+
+    document
+    .getElementById(
+        "activeCount"
+    )
+    .innerText =
+        myActive;
+
+
+    document
+    .getElementById(
+        "completedCount"
+    )
+    .innerText =
+        completed;
+
+}
+
+
+function initializeMap(){
+
+    map =
+        L.map(
+            "map"
+        )
+        .setView(
+            [25.5941,85.1376],
+            10
+        );
+
+
+    L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            attribution:
+                "&copy; OpenStreetMap contributors"
+        }
+    ).addTo(map);
+
+}
+
+
+function startLocationTracking(){
+
+    if(!navigator.geolocation){
+
+        showMessage(
+            "GPS is not supported by this browser.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(watchId !== null){
+
+        showMessage(
+            "GPS tracking is already running.",
+            "info"
+        );
+
+        return;
+
+    }
+
+
+    showMessage(
+        "Starting GPS tracking...",
+        "info"
+    );
+
+
+    watchId =
+        navigator.geolocation.watchPosition(
+
+            position => {
+
+                currentLatitude =
+                    position.coords.latitude;
+
+
+                currentLongitude =
+                    position.coords.longitude;
+
+
+                const accuracy =
+                    position.coords.accuracy;
+
+
+                updateLocationUI(
+                    currentLatitude,
+                    currentLongitude,
+                    accuracy
+                );
+
+
+                updateMap(
+                    currentLatitude,
+                    currentLongitude
+                );
+
+
+                sendDriverLocation(
+                    currentLatitude,
+                    currentLongitude,
+                    accuracy
+                );
+
+            },
+
+
+            error => {
+
+                let text =
+                    "Unable to get GPS location.";
+
+
+                if(
+                    error.code ===
+                    error.PERMISSION_DENIED
+                ){
+
+                    text =
+                        "Location permission denied.";
+
+                }
+
+
+                showMessage(
+                    text,
+                    "error"
+                );
+
+            },
+
+
+            {
+                enableHighAccuracy:true,
+
+                maximumAge:5000,
+
+                timeout:15000
+
+            }
+
+        );
+
+}
+
+
+function stopLocationTracking(){
+
+    if(watchId !== null){
+
+        navigator.geolocation.clearWatch(
+            watchId
+        );
+
+        watchId = null;
+
+        showMessage(
+            "GPS tracking stopped.",
+            "info"
+        );
+
+    }
+
+}
+
+
+function updateLocationUI(
+    latitude,
+    longitude,
+    accuracy
+){
+
+    document
+    .getElementById(
+        "locationValue"
+    )
+    .innerHTML =
+
+        "Latitude: "
+        + latitude.toFixed(6)
+        + "<br>"
+
+        + "Longitude: "
+        + longitude.toFixed(6)
+        + "<br>"
+
+        + "Accuracy: "
+        + Math.round(
+            accuracy || 0
+        )
+        + " meters";
+
+}
+
+
+function updateMap(
+    latitude,
+    longitude
+){
+
+    if(!map){
+        return;
+    }
+
+
+    const position =
+        [
+            latitude,
+            longitude
+        ];
+
+
+    if(!driverMarker){
+
+        driverMarker =
+            L.marker(
+                position
+            )
+            .addTo(map)
+            .bindPopup(
+                "🚕 Your Current Location"
+            );
+
+    }else{
+
+        driverMarker.setLatLng(
+            position
+        );
+
+    }
+
+
+    map.setView(
+        position,
+        16
+    );
+
+}
+
+
+async function sendDriverLocation(
+    latitude,
+    longitude,
+    accuracy
+){
+
+    try{
+
+        const response =
+            await fetch(
+                API + "/api/location/update",
+                {
+
+                    method:"POST",
+
+                    headers:
+                        authHeaders(),
+
+                    body:
+                    JSON.stringify({
+
+                        latitude,
+
+                        longitude,
+
+                        accuracy
+
+                    })
+
+                }
+            );
+
+
+        if(!response.ok){
+
+            return;
+
+        }
+
+
+        /*
+         * Also update location
+         * for the current active ride.
+         */
+
+        const activeRide =
+            rides.find(
+                ride => {
+
+                    const driverId =
+                        getId(
+                            ride.driver
+                        );
+
+
+                    const myId =
+                        USER.id
+                        || USER.userId;
+
+
+                    return (
+                        String(driverId)
+                        ===
+                        String(myId)
+                    )
+                    &&
+                    (
+                        ride.status ===
+                            "Driver accepted"
+                        ||
+                        ride.status ===
+                            "Ride started"
+                    );
+
+                }
+            );
+
+
+        if(activeRide){
+
+            await fetch(
+
+                API
+                + "/api/rides/"
+                + activeRide._id
+                + "/driver-location",
+
+                {
+
+                    method:"POST",
+
+                    headers:
+                        authHeaders(),
+
+                    body:
+                    JSON.stringify({
+
+                        latitude,
+
+                        longitude,
+
+                        accuracy
+
+                    })
+
+                }
+
+            );
+
+        }
+
+
+    }catch(error){
+
+        console.error(
+            "Location update error:",
+            error
+        );
+
+    }
+
+}
+
+
+async function focusRide(
+    rideId
+){
+
+    try{
+
+        const response =
+            await fetch(
+                API
+                + "/api/rides/"
+                + rideId,
+                {
+
+                    headers:
+                        authHeaders()
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message
+                || "Unable to get ride"
+            );
+
+        }
+
+
+        const ride =
+            data.ride;
+
+
+        if(
+            ride.driverLocation
+            &&
+            ride.driverLocation.latitude
+            &&
+            ride.driverLocation.longitude
+        ){
+
+            const lat =
+                ride.driverLocation.latitude;
+
+
+            const lng =
+                ride.driverLocation.longitude;
+
+
+            updateMap(
+                lat,
+                lng
+            );
+
+        }
+
+
+        showMessage(
+            "Ride location loaded.",
+            "success"
+        );
+
+
+    }catch(error){
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+function logout(){
+
+    stopLocationTracking();
+
+
+    localStorage.removeItem(
+        "udanToken"
+    );
+
+
+    localStorage.removeItem(
+        "udanUser"
+    );
+
+
+    location.href =
+        "login.html";
+
+}
+
+
+window.addEventListener(
+    "beforeunload",
+    function(){
+
+        if(
+            watchId !== null
+        ){
+
+            navigator.geolocation.clearWatch(
+                watchId
+            );
+
+        }
+
+    }
+);
+
+
+async function initialize(){
+
+    if(!checkLogin()){
+        return;
+    }
+
+
+    setupUser();
+
+    initializeMap();
+
+    await loadRides();
+
+}
+
+
+initialize();
+
+
+// Automatically refresh rides
+// every 10 seconds.
+
+setInterval(
+    function(){
+
+        if(
+            TOKEN
+            &&
+            USER
+        ){
+
+            loadRides();
+
+        }
+
+    },
+    10000
+);
+
+</script>
+
+</body>
+
+</html>
